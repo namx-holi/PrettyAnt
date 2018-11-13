@@ -145,6 +145,18 @@ class Grid:
 			ant.step()
 
 
+	def reset(self):
+		for ant in self._ants:
+			del ant
+
+		self._squares = [[
+				self._ruleset.get_first_colour()
+				for y in range(self._height)
+			] for x in range(self._width)]
+
+		self._ants = []
+
+
 
 class Ant:
 
@@ -177,21 +189,64 @@ class Ant:
 
 class GridDisplay(tk.Tk):
 
-	def __init__(self, grid, scale):
+	def __init__(self):
 		tk.Tk.__init__(self)
 
-		self.grid = grid
-		self.scale = scale
+		self.grid = None
+
+		# settings
+		self.grid_width = 80
+		self.grid_height = 80
+		self.scale = 10
+		self.ant_count = 4
+
+
+		# Create ruleset
+		self.ruleset = Ruleset()
+		self.ruleset.add_rule("#000000", Rotation.Right)
+		self.ruleset.add_rule("#D60270", Rotation.Left)
+		self.ruleset.add_rule("#9B4F96", Rotation.Straight)
+		self.ruleset.add_rule("#0038A8", Rotation.UTurn)
 
 		self.initialise()
 
 
 	def initialise(self):
+		self.grid = Grid(self.grid_width, self.grid_height, self.ruleset)
+		self.setup_grid()
+
 		width  = self.grid.get_width()  * self.scale
 		height = self.grid.get_height() * self.scale
 
 		self.grid_canvas = tk.Canvas(self, width=width, height=height)
+		self.grid_canvas.bind("<Button-1>", self.click_event)
 		self.grid_canvas.pack(fill=tk.BOTH, expand=True)
+
+		self.simulate_grid()
+
+
+	def click_event(self, event):
+		# Mouse was pressed
+		self.reset_grid()
+		self.simulate_grid()
+		self.draw_grid()
+
+
+	def simulate_grid(self):
+		# Step a few times
+		for i in range(10000):
+			self.grid.step()
+
+
+	def setup_grid(self):
+
+		# Add a few ants
+		for i in range(self.ant_count):
+			x = random.randint(0, self.grid_width-1)
+			y = random.randint(0, self.grid_height-1)
+			direction = Direction.rand_compass_direction()
+
+			self.grid.add_ant(x, y, direction)
 
 
 	def draw_grid(self):
@@ -203,36 +258,13 @@ class GridDisplay(tk.Tk):
 					outline=colour, fill=colour)
 
 
+	def reset_grid(self):
+		self.grid.reset()
+		self.setup_grid()
+
+
 
 if __name__ == "__main__":
-
-	width, height = 80, 80
-	scale = 10
-
-	# Create ruleset
-	ruleset = Ruleset()
-	ruleset.add_rule("#000000", Rotation.Right)
-	ruleset.add_rule("#D60270", Rotation.Left)
-	ruleset.add_rule("#9B4F96", Rotation.Straight)
-	ruleset.add_rule("#0038A8", Rotation.UTurn)
-
-	# Create grid
-	grid = Grid(width, height, ruleset)
-
-	# Add a few ants
-	ant_count = 4
-	for i in range(ant_count):
-		x = random.randint(0, width-1)
-		y = random.randint(0, height-1)
-		direction = Direction.rand_compass_direction()
-
-		grid.add_ant(x, y, direction)
-
-	# Step a few times
-	for i in range(10000):
-		grid.step()
-
-	# Draw!!
-	app = GridDisplay(grid, scale)
+	app = GridDisplay()
 	app.draw_grid()
 	app.mainloop()
