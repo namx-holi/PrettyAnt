@@ -149,6 +149,9 @@ class Grid:
 		for ant in self._ants:
 			del ant
 
+		for square in self._squares:
+			del square
+
 		self._squares = [[
 				self._ruleset.get_first_colour()
 				for y in range(self._height)
@@ -250,6 +253,7 @@ class GridDisplay(tk.Tk):
 
 
 	def draw_grid(self):
+		self.grid_canvas.delete("all")
 		for y, row in enumerate(self.grid.get_squares()):
 			for x, colour in enumerate(row):
 				self.grid_canvas.create_rectangle(
