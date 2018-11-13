@@ -1,5 +1,6 @@
 import tkinter as tk
 import random
+import json
 
 
 
@@ -43,8 +44,8 @@ class Direction:
 class Rotation:
 	Right = 0.25
 	Left = -0.25
-	Straight = 0
-	UTurn = 0.5
+	Forward = 0
+	Reverse = 0.5
 
 
 
@@ -192,26 +193,43 @@ class Ant:
 
 class GridDisplay(tk.Tk):
 
-	def __init__(self):
+	def __init__(self, settings_file):
 		tk.Tk.__init__(self)
 
 		self.grid = None
-
-		# settings
-		self.grid_width = 80
-		self.grid_height = 80
-		self.scale = 10
-		self.ant_count = 4
-
-
-		# Create ruleset
 		self.ruleset = Ruleset()
-		self.ruleset.add_rule("#000000", Rotation.Right)
-		self.ruleset.add_rule("#D60270", Rotation.Left)
-		self.ruleset.add_rule("#9B4F96", Rotation.Straight)
-		self.ruleset.add_rule("#0038A8", Rotation.UTurn)
+
+		self.load_settings(settings_file)
 
 		self.initialise()
+
+
+	def load_settings(self, settings_file):
+		with open(settings_file, "r") as stream:
+			d = json.load(stream)
+
+		self.grid_width = d["grid_width"]
+		self.grid_height = d["grid_height"]
+		self.scale = d["scale"]
+		self.ant_count = d["ant_count"]
+		self.steps = d["steps"]
+
+		for rule in d["rules"]:
+			if rule[1].lower() in ["right"]:
+				self.ruleset.add_rule(rule[0], Rotation.Right)
+
+			elif rule[1].lower() in ["left"]:
+				self.ruleset.add_rule(rule[0], Rotation.Left)
+
+			elif rule[1].lower() in ["forward", "straight"]:
+				self.ruleset.add_rule(rule[0], Rotation.Forward)
+
+			elif rule[1].lower() in ["reverse", "uturn"]:
+				self.ruleset.add_rule(rule[0], Rotation.Reverse)
+
+			else:
+				print("Attempted to load rule with invalid direction ({})"
+					.format(rule[1]))
 
 
 	def initialise(self):
@@ -237,7 +255,7 @@ class GridDisplay(tk.Tk):
 
 	def simulate_grid(self):
 		# Step a few times
-		for i in range(10000):
+		for i in range(self.steps):
 			self.grid.step()
 
 
@@ -269,6 +287,6 @@ class GridDisplay(tk.Tk):
 
 
 if __name__ == "__main__":
-	app = GridDisplay()
+	app = GridDisplay("settings.json")
 	app.draw_grid()
 	app.mainloop()

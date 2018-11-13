@@ -1,0 +1,15 @@
+{
+	"grid_width":  80,
+	"grid_height": 80,
+	"scale": 10,
+
+	"ant_count": 4,
+	"steps": 10000,
+
+	"rules": [
+		["#000000", "right"],
+		["#D60270", "left"],
+		["#9B4F96", "forward"],
+		["#0038A8", "reverse"]
+	]
+}
