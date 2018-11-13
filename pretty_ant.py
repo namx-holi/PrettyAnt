@@ -177,16 +177,45 @@ class Ant:
 
 class GridDisplay(tk.Tk):
 
-	def __init__(self, grid, scale):
+	def __init__(self):
 		tk.Tk.__init__(self)
 
-		self.grid = grid
-		self.scale = scale
+		# self.grid = grid
+		# self.scale = scale
 
 		self.initialise()
 
 
 	def initialise(self):
+		width, height = 80, 80
+		scale = 10
+		self.scale = scale
+
+		# Create ruleset
+		ruleset = Ruleset()
+		ruleset.add_rule("#000000", Rotation.Right)
+		ruleset.add_rule("#D60270", Rotation.Left)
+		ruleset.add_rule("#9B4F96", Rotation.Straight)
+		ruleset.add_rule("#0038A8", Rotation.UTurn)
+
+		# Create grid
+		grid = Grid(width, height, ruleset)
+		self.grid = grid
+
+		# Add a few ants
+		ant_count = 4
+		for i in range(ant_count):
+			x = random.randint(0, width-1)
+			y = random.randint(0, height-1)
+			direction = Direction.rand_compass_direction()
+
+			grid.add_ant(x, y, direction)
+
+		# Step a few times
+		for i in range(10000):
+			grid.step()
+
+
 		width  = self.grid.get_width()  * self.scale
 		height = self.grid.get_height() * self.scale
 
@@ -206,33 +235,9 @@ class GridDisplay(tk.Tk):
 
 if __name__ == "__main__":
 
-	width, height = 80, 80
-	scale = 10
-
-	# Create ruleset
-	ruleset = Ruleset()
-	ruleset.add_rule("#000000", Rotation.Right)
-	ruleset.add_rule("#D60270", Rotation.Left)
-	ruleset.add_rule("#9B4F96", Rotation.Straight)
-	ruleset.add_rule("#0038A8", Rotation.UTurn)
-
-	# Create grid
-	grid = Grid(width, height, ruleset)
-
-	# Add a few ants
-	ant_count = 4
-	for i in range(ant_count):
-		x = random.randint(0, width-1)
-		y = random.randint(0, height-1)
-		direction = Direction.rand_compass_direction()
-
-		grid.add_ant(x, y, direction)
-
-	# Step a few times
-	for i in range(10000):
-		grid.step()
+	
 
 	# Draw!!
-	app = GridDisplay(grid, scale)
+	app = GridDisplay()
 	app.draw_grid()
 	app.mainloop()
