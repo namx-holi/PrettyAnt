@@ -195,6 +195,7 @@ class GridDisplay(tk.Tk):
 
 	def __init__(self, settings_file):
 		tk.Tk.__init__(self)
+		self.resizable(False, False)
 
 		self.grid = None
 		self.ruleset = Ruleset()
@@ -241,7 +242,10 @@ class GridDisplay(tk.Tk):
 
 		self.grid_canvas = tk.Canvas(self, width=width, height=height)
 		self.grid_canvas.bind("<Button-1>", self.click_event)
+		self.grid_canvas.bind("<KeyRelease>", self.keypress_event)
 		self.grid_canvas.pack(fill=tk.BOTH, expand=True)
+
+		self.grid_canvas.focus_set()
 
 		self.simulate_grid()
 
@@ -251,6 +255,11 @@ class GridDisplay(tk.Tk):
 		self.reset_grid()
 		self.simulate_grid()
 		self.draw_grid()
+
+
+	def keypress_event(self, event):
+		if event.keysym in ["q", "Q"]:
+			self.destroy()
 
 
 	def simulate_grid(self):
