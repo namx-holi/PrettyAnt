@@ -145,6 +145,15 @@ class Grid:
 			ant.step()
 
 
+	def reset(self):
+		self._squares = [[
+			ruleset.get_first_colour()
+			for y in range(height)
+		] for x in range(width)]
+
+		self._ants = []
+
+
 
 class Ant:
 
@@ -182,10 +191,11 @@ class GridDisplay(tk.Tk):
 
 		self.grid = None
 
+		# settings
 		self.grid_width = 80
 		self.grid_height = 80
-
 		self.scale = 10
+		self.ant_count = 4
 
 
 		# Create ruleset
@@ -195,14 +205,12 @@ class GridDisplay(tk.Tk):
 		self.ruleset.add_rule("#9B4F96", Rotation.Straight)
 		self.ruleset.add_rule("#0038A8", Rotation.UTurn)
 
-
 		self.initialise()
 
 
 	def initialise(self):
+		self.grid = Grid(self.grid_width, self.grid_height, self.ruleset)
 
-		self.generate_grid()
-		
 		width  = self.grid.get_width()  * self.scale
 		height = self.grid.get_height() * self.scale
 
@@ -210,13 +218,10 @@ class GridDisplay(tk.Tk):
 		self.grid_canvas.pack(fill=tk.BOTH, expand=True)
 
 
-
-	def generate_grid(self):
-		self.grid = Grid(self.grid_width, self.grid_height, self.ruleset)
+	def simulate_grid(self):
 
 		# Add a few ants
-		ant_count = 4
-		for i in range(ant_count):
+		for i in range(self.ant_count):
 			x = random.randint(0, self.grid_width-1)
 			y = random.randint(0, self.grid_height-1)
 			direction = Direction.rand_compass_direction()
@@ -229,12 +234,18 @@ class GridDisplay(tk.Tk):
 
 
 	def draw_grid(self):
+		self.simulate_grid()
+
 		for y, row in enumerate(self.grid.get_squares()):
 			for x, colour in enumerate(row):
 				self.grid_canvas.create_rectangle(
 					    x*self.scale,     y*self.scale, # Top left corner
 					(x+1)*self.scale, (y+1)*self.scale, # Bot right corner
 					outline=colour, fill=colour)
+
+
+	def reset_grid(self):
+		self.grid.reset()
 
 
 
