@@ -1,22 +1,6 @@
 import tkinter as tk
 import random
 
-# import numpy as np
-# from math import sin
-
-# WIDTH, HEIGHT = 640, 480
-
-# window = tk.Tk()
-# canvas = tk.Canvas(window, width=WIDTH, height=HEIGHT, bg="#000000")
-# canvas.pack()
-
-# img = tk.PhotoImage(width=WIDTH, height=HEIGHT)
-# canvas.create_image((WIDTH/2, HEIGHT/2), image=img, state="normal")
-
-
-# for x in range(4 * WIDTH):
-# 	y = int(HEIGHT/2 + HEIGHT/4 * sin(x / 80.0))
-# 	img.put("#ffffff", (x//4, y))
 
 
 class Direction:
@@ -53,6 +37,7 @@ class Direction:
 			cls.S,
 			cls.W
 		])
+
 
 
 class Rotation:
@@ -216,60 +201,6 @@ class GridDisplay(tk.Tk):
 					    x*self.scale,     y*self.scale, # Top left corner
 					(x+1)*self.scale, (y+1)*self.scale, # Bot right corner
 					outline=colour, fill=colour)
-
-
-
-
-
-# class GridDisplay:
-# 	def __init__(self, master, grid, scale):
-# 		self._master = master
-# 		self._grid   = grid
-# 		self._scale  = scale
-
-# 		self.frame = tk.Frame(master)
-
-# 		width  = grid.get_width()  * scale
-# 		height = grid.get_height() * scale
-
-# 		self.grid_canvas = tk.Canvas(self.frame, width=width, height=height)
-# 		self.grid_canvas.pack(fill=tk.BOTH, expand=True)
-
-# 		self.draw_grid()
-
-
-# 	def draw_grid(self):
-# 		for y, row in enumerate(self._grid.get_squares()):
-# 			for x, colour in enumerate(row):
-# 				self.grid_canvas.create_rectangle(
-# 					    x*self._scale,     y*self._scale, # Top left corner
-# 					(x+1)*self._scale, (y+1)*self._scale, # Bot right corner
-# 					outline=colour, fill=colour)
-
-
-		
-def display_grid(grid, scale):
-	width = grid.get_width() * scale
-	height = grid.get_height() * scale
-
-	window = tk.Tk()
-	canvas = tk.Canvas(window, width=width, height=height, bg="#000000")
-	canvas.pack(fill=tk.BOTH, expand=True)
-
-	# canvas.create_rectangle(0, 0, scale, scale, outline="#fb0", fill="#f50")
-	# canvas.create_rectangle(200, 100, 300, 300, outline="#fb0", fill="#f50")
-
-	for y, row in enumerate(grid.get_squares()):
-		for x, colour in enumerate(row):
-			canvas.create_rectangle(
-				x*scale, y*scale,         # Top left corner pos
-				(x+1)*scale, (y+1)*scale, # Bottom right corner pos
-				outline=colour, fill=colour)
-
-	tk.mainloop()
-
-
-
 
 
 
