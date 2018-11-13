@@ -146,10 +146,13 @@ class Grid:
 
 
 	def reset(self):
+		for ant in self._ants:
+			del ant
+
 		self._squares = [[
-			ruleset.get_first_colour()
-			for y in range(height)
-		] for x in range(width)]
+				self._ruleset.get_first_colour()
+				for y in range(self._height)
+			] for x in range(self._width)]
 
 		self._ants = []
 
@@ -210,15 +213,32 @@ class GridDisplay(tk.Tk):
 
 	def initialise(self):
 		self.grid = Grid(self.grid_width, self.grid_height, self.ruleset)
+		self.setup_grid()
 
 		width  = self.grid.get_width()  * self.scale
 		height = self.grid.get_height() * self.scale
 
 		self.grid_canvas = tk.Canvas(self, width=width, height=height)
+		self.grid_canvas.bind("<Button-1>", self.click_event)
 		self.grid_canvas.pack(fill=tk.BOTH, expand=True)
+
+		self.simulate_grid()
+
+
+	def click_event(self, event):
+		# Mouse was pressed
+		self.reset_grid()
+		self.simulate_grid()
+		self.draw_grid()
 
 
 	def simulate_grid(self):
+		# Step a few times
+		for i in range(10000):
+			self.grid.step()
+
+
+	def setup_grid(self):
 
 		# Add a few ants
 		for i in range(self.ant_count):
@@ -228,14 +248,8 @@ class GridDisplay(tk.Tk):
 
 			self.grid.add_ant(x, y, direction)
 
-		# Step a few times
-		for i in range(10000):
-			self.grid.step()
-
 
 	def draw_grid(self):
-		self.simulate_grid()
-
 		for y, row in enumerate(self.grid.get_squares()):
 			for x, colour in enumerate(row):
 				self.grid_canvas.create_rectangle(
@@ -246,6 +260,7 @@ class GridDisplay(tk.Tk):
 
 	def reset_grid(self):
 		self.grid.reset()
+		self.setup_grid()
 
 
 
