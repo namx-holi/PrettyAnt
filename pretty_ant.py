@@ -1,3 +1,4 @@
+
 import tkinter as tk
 import random
 import json
@@ -47,6 +48,21 @@ class Rotation:
 	Forward = 0
 	Reverse = 0.5
 
+	_ROTATION_LIST = [Right, Left, Forward, Reverse]
+	_ROTATION_LIST_STR = ["R", "L", "F", "R"]
+
+	@classmethod
+	def rand_rotation(cls):
+		return random.choice(cls._ROTATION_LIST)
+
+	@classmethod
+	def rotation_str(cls, rotation):
+		try:
+			index = cls._ROTATION_LIST.index(rotation)
+		except ValueError:
+			return "?"
+		return cls._ROTATION_LIST_STR[index]
+
 
 
 class Ruleset:
@@ -80,10 +96,24 @@ class Ruleset:
 		try:
 			current_index = self.get_colours().index(colour)
 		except ValueError:
-			return get_first_colour()
+			return self.get_first_colour()
 
 		next_index = (current_index + 1) % len(self._rules)
 		return self._rules[next_index]["colour"]
+
+
+	def __str__(self):
+		return_lines = ["", "Rules:"]
+		for rule in self._rules:
+			return_lines.append("{}: {}".format(
+				rule["colour"],
+				Rotation.rotation_str(rule["rotations"])))
+
+		return "\n".join(return_lines)
+
+
+	def clear(self):
+		self._rules = []
 
 
 
@@ -102,6 +132,10 @@ class Grid:
 				ruleset.get_first_colour()
 				for y in range(height)
 			] for x in range(width)]
+
+
+	def set_ruleset(self, ruleset):
+		self._ruleset = ruleset
 
 
 	def get_width(self):
@@ -197,8 +231,11 @@ class GridDisplay(tk.Tk):
 		tk.Tk.__init__(self)
 		self.resizable(False, False)
 
+		self.settings_file = settings_file
+
 		self.grid = None
 		self.ruleset = Ruleset()
+		self.reload_settings = False
 
 		self.load_settings(settings_file)
 
@@ -220,25 +257,52 @@ class GridDisplay(tk.Tk):
 		self.grid_width = d["grid_width"]
 		self.grid_height = d["grid_height"]
 		self.scale = d["scale"]
-		self.ant_count = d["ant_count"]
 		self.steps = d["steps"]
 
+		if d["ant_count"] in ["random"]:
+			self.ant_count = random.randint(
+				d["random_constraints"]["min_ants"],
+				d["random_constraints"]["max_ants"])
+		else:
+			self.ant_count = d["ant_count"]
+
+		if d["rules"] == ["random"]:
+			number_of_rules = random.randint(
+				d["random_constraints"]["min_colours"],
+				d["random_constraints"]["max_colours"])
+			d["rules"] = [["random", "random"]] * number_of_rules
+
 		for rule in d["rules"]:
-			if rule[1].lower() in ["right"]:
-				self.ruleset.add_rule(rule[0], Rotation.Right)
+			if rule[0].lower() in ["random"]:
+				colour_num = random.randint(0x000000, 0xFFFFFF)
+				num_as_hex = "{0:#0{1}x}".format(colour_num, 8)
+				colour = "#" + num_as_hex[2:].upper()
+				self.reload_settings = True
+			else:
+				colour = rule[0]
+
+			if rule[1].lower() in ["random"]:
+				self.ruleset.add_rule(colour, Rotation.rand_rotation())
+				self.reload_settings = True
+
+			elif rule[1].lower() in ["right"]:
+				self.ruleset.add_rule(colour, Rotation.Right)
 
 			elif rule[1].lower() in ["left"]:
-				self.ruleset.add_rule(rule[0], Rotation.Left)
+				self.ruleset.add_rule(colour, Rotation.Left)
 
 			elif rule[1].lower() in ["forward", "straight"]:
-				self.ruleset.add_rule(rule[0], Rotation.Forward)
+				self.ruleset.add_rule(colour, Rotation.Forward)
 
 			elif rule[1].lower() in ["reverse", "uturn"]:
-				self.ruleset.add_rule(rule[0], Rotation.Reverse)
+				self.ruleset.add_rule(colour, Rotation.Reverse)
 
 			else:
 				print("Attempted to load rule with invalid direction ({})"
 					.format(rule[1]))
+
+		print(self.ruleset)
+		print("Ants: {}".format(self.ant_count))
 
 
 	def initialise(self):
@@ -299,6 +363,12 @@ class GridDisplay(tk.Tk):
 
 	def reset_grid(self):
 		self.grid.reset()
+
+		if self.reload_settings:
+			self.ruleset.clear()
+			self.load_settings(self.settings_file)
+			self.grid.set_ruleset(self.ruleset)
+
 		self.setup_grid()
 
 
