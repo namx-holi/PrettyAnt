@@ -7,9 +7,17 @@
 	"steps": 10000,
 
 	"rules": [
+		// ["#000000", "right"],
+		// ["#D60270", "left"],
+		// ["#9B4F96", "forward"],
+		// ["#0038A8", "reverse"]
 		["#000000", "right"],
-		["#D60270", "left"],
-		["#9B4F96", "forward"],
-		["#0038A8", "reverse"]
+		["#FF0000", "left"],
+		["#FF7F00", "forward"],
+		["#FFFF00", "reverse"],
+		["#00FF00", "right"],
+		["#0000FF", "left"],
+		["#4B0082", "forward"],
+		["#9400D3", "reverse"]
 	]
 }
