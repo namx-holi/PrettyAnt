@@ -206,8 +206,16 @@ class GridDisplay(tk.Tk):
 
 
 	def load_settings(self, settings_file):
+		# Remove the comment lines first
 		with open(settings_file, "r") as stream:
-			d = json.load(stream)
+			text = stream.read()
+
+		data = "\n".join(
+			[line for line in text.split("\n")
+			if line.strip()[:2] != "//"]
+		)
+
+		d = json.loads(data)
 
 		self.grid_width = d["grid_width"]
 		self.grid_height = d["grid_height"]
