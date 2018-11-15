@@ -257,11 +257,19 @@ class GridDisplay(tk.Tk):
 		self.grid_width = d["grid_width"]
 		self.grid_height = d["grid_height"]
 		self.scale = d["scale"]
-		self.ant_count = d["ant_count"]
 		self.steps = d["steps"]
 
+		if d["ant_count"] in ["random"]:
+			self.ant_count = random.randint(
+				d["random_constraints"]["min_ants"],
+				d["random_constraints"]["max_ants"])
+		else:
+			self.ant_count = d["ant_count"]
+
 		if d["rules"] == ["random"]:
-			number_of_rules = random.randint(2, 10)
+			number_of_rules = random.randint(
+				d["random_constraints"]["min_colours"],
+				d["random_constraints"]["max_colours"])
 			d["rules"] = [["random", "random"]] * number_of_rules
 
 		for rule in d["rules"]:
@@ -294,6 +302,7 @@ class GridDisplay(tk.Tk):
 					.format(rule[1]))
 
 		print(self.ruleset)
+		print("Ants: {}".format(self.ant_count))
 
 
 	def initialise(self):

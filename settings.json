@@ -3,7 +3,8 @@
 	"grid_height": 80,
 	"scale": 10,
 
-	"ant_count": 4,
+	// "ant_count": 4,
+	"ant_count": "random",
 	"steps": 10000,
 
 	"rules": [
@@ -39,5 +40,13 @@
 
 		// Random number of colours with random directions
 		"random"
-	]
+	],
+
+	"random_constraints": {
+		"min_colours": 2,
+		"max_colours": 10,
+
+		"min_ants": 4,
+		"max_ants": 10
+	}
 }
