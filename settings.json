@@ -7,17 +7,37 @@
 	"steps": 10000,
 
 	"rules": [
+		// Normal pink, purple, and blue on black background
 		// ["#000000", "right"],
 		// ["#D60270", "left"],
 		// ["#9B4F96", "forward"],
 		// ["#0038A8", "reverse"]
-		["#000000", "right"],
-		["#FF0000", "left"],
-		["#FF7F00", "forward"],
-		["#FFFF00", "reverse"],
-		["#00FF00", "right"],
-		["#0000FF", "left"],
-		["#4B0082", "forward"],
-		["#9400D3", "reverse"]
+
+		// Rainbow patterns
+		// ["#000000", "right"],
+		// ["#FF0000", "left"],
+		// ["#FF7F00", "forward"],
+		// ["#FFFF00", "reverse"],
+		// ["#00FF00", "right"],
+		// ["#0000FF", "left"],
+		// ["#4B0082", "forward"],
+		// ["#9400D3", "reverse"]
+
+		// Rainbow patterns with random directions
+		// ["#000000", "random"],
+		// ["#FF0000", "random"],
+		// ["#FF7F00", "random"],
+		// ["#FFFF00", "random"],
+		// ["#00FF00", "random"],
+		// ["#0000FF", "random"],
+		// ["#4B0082", "random"],
+		// ["#9400D3", "random"]
+
+		// Two random colours with random directions
+		// ["random", "random"],
+		// ["random", "random"]
+
+		// Random number of colours with random directions
+		"random"
 	]
 }
