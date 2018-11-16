@@ -104,6 +104,9 @@ class Ruleset:
 
 	def __str__(self):
 		return_lines = ["", "Rules:"]
+
+		print(self._rules)
+
 		for rule in self._rules:
 			return_lines.append("{}: {}".format(
 				rule["colour"],
@@ -362,13 +365,13 @@ class GridDisplay(tk.Tk):
 
 
 	def reset_grid(self):
-		self.grid.reset()
 
 		if self.reload_settings:
 			self.ruleset.clear()
 			self.load_settings(self.settings_file)
 			self.grid.set_ruleset(self.ruleset)
 
+		self.grid.reset()
 		self.setup_grid()
 
 
